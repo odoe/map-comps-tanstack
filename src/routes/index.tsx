@@ -12,15 +12,15 @@ import '@esri/calcite-components/components/calcite-button'
 import '@esri/calcite-components/components/calcite-navigation'
 import '@esri/calcite-components/components/calcite-navigation-logo'
 
-import ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
+import type ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
 import DimensionalDefinition from '@arcgis/core/layers/support/DimensionalDefinition.js'
-import ColorVariable from '@arcgis/core/renderers/visualVariables/ColorVariable.js'
 
 import type Constraints from '@arcgis/core/views/3d/constraints/Constraints.js'
 
 import { useEffect, useRef, useState } from 'react'
 import type FeatureLayer from '@arcgis/core/layers/FeatureLayer'
 import type LabelSymbol3D from '@arcgis/core/symbols/LabelSymbol3D'
+import { createWindLayer } from '@/utils/layer-utils'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -62,47 +62,7 @@ function App() {
       } as unknown as Constraints
 
       // Create the ImageryTileLayer with the FlowRenderer
-      const tileLayer = new ImageryTileLayer({
-        url: 'https://tiledimageservices.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Global_Average_Wind_Speeds_Month_Altitude/ImageServer',
-        elevationInfo: {
-          mode: 'absolute-height',
-          offset: 8000,
-        },
-        renderer: {
-          type: 'flow',
-          trailLength: 20,
-          flowSpeed: 3,
-          trailWidth: 2.5,
-          visualVariables: [
-            new ColorVariable({
-              field: 'Magnitude',
-              stops: [
-                { value: 0, color: [0, 100, 255, 1], label: '0 m/s' },
-                { value: 0.1, color: [0, 150, 255, 1] },
-                { value: 3, color: [0, 200, 255, 1] },
-                { value: 7, color: [0, 220, 130, 1] },
-                { value: 15, color: [80, 255, 70, 1] },
-                { value: 25, color: [200, 255, 40, 1] },
-                { value: 40, color: [255, 255, 0, 1], label: '>40 m/s' },
-              ],
-            }),
-          ],
-        },
-        multidimensionalDefinition: [
-          new DimensionalDefinition({
-            variableName: 'Vector-MagDir',
-            dimensionName: 'StdPressure',
-            values: [currentPressureValue],
-            isSlice: true,
-          }),
-          new DimensionalDefinition({
-            variableName: 'Vector-MagDir',
-            dimensionName: 'StdTime',
-            values: [currentTimeSlice],
-            isSlice: true,
-          }),
-        ],
-      })
+      const tileLayer = createWindLayer(currentPressureValue, currentTimeSlice)
 
       setWindTileLayer(tileLayer)
     }
@@ -278,7 +238,7 @@ function App() {
           onarcgisViewReadyChange={() => setMapReady(true)}
         />
         <div
-          className="w-[10px] h-full bg-blue-500 hover:bg-blue-100 hover:cursor-pointer"
+          className="w-2.5 h-full bg-blue-500 hover:bg-blue-100 hover:cursor-pointer"
           onClick={resizePanel}
         />
       </section>
