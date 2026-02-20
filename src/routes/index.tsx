@@ -1,25 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useEffect, useRef, useState } from 'react'
 
 import '@esri/calcite-components/components/calcite-action'
 import '@esri/calcite-components/components/calcite-action-bar'
-import '@esri/calcite-components/components/calcite-shell'
-import '@esri/calcite-components/components/calcite-panel'
-import '@esri/calcite-components/components/calcite-block'
-import '@esri/calcite-components/components/calcite-tile'
-import '@esri/calcite-components/components/calcite-tile-group'
-import '@esri/calcite-components/components/calcite-notice'
-import '@esri/calcite-components/components/calcite-button'
 import '@esri/calcite-components/components/calcite-navigation'
 import '@esri/calcite-components/components/calcite-navigation-logo'
+import '@esri/calcite-components/components/calcite-shell'
 
+import type FeatureLayer from '@arcgis/core/layers/FeatureLayer.js'
 import type ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
 import DimensionalDefinition from '@arcgis/core/layers/support/DimensionalDefinition.js'
-
+import type LabelSymbol3D from '@arcgis/core/symbols/LabelSymbol3D.js'
 import type Constraints from '@arcgis/core/views/3d/constraints/Constraints.js'
 
-import { useEffect, useRef, useState } from 'react'
-import type FeatureLayer from '@arcgis/core/layers/FeatureLayer'
-import type LabelSymbol3D from '@arcgis/core/symbols/LabelSymbol3D'
+import { MultidimensionalFilterPanel } from '@/components/multidimensional-filter-panel'
 import { createWindLayer } from '@/utils/layer-utils'
 
 export const Route = createFileRoute('/')({ component: App })
@@ -43,30 +37,29 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (windTileLayer) return
-    if (mapRef.current) {
-      const labelsLayer = mapRef.current.map?.allLayers.find(
-        (layer) => layer.title === 'Places and Labels',
-      ) as FeatureLayer | undefined
+    if (!mapReady || windTileLayer || !mapRef.current) return
 
-      labelsLayer?.labelingInfo?.forEach((labelClass) => {
-        labelClass.labelPlacement = 'above-center'
-        ;(labelClass.symbol as LabelSymbol3D).verticalOffset = {
-          screenLength: 8,
-        }
-      })
-      mapRef.current.constraints = {
-        altitude: {
-          min: 1000000,
-        },
-      } as unknown as Constraints
+    const labelsLayer = mapRef.current.map?.allLayers.find(
+      (layer) => layer.title === 'Places and Labels',
+    ) as FeatureLayer | undefined
 
-      // Create the ImageryTileLayer with the FlowRenderer
-      const tileLayer = createWindLayer(currentPressureValue, currentTimeSlice)
+    labelsLayer?.labelingInfo?.forEach((labelClass) => {
+      labelClass.labelPlacement = 'above-center'
+      ;(labelClass.symbol as LabelSymbol3D).verticalOffset = {
+        screenLength: 8,
+      }
+    })
+    mapRef.current.constraints = {
+      altitude: {
+        min: 1000000,
+      },
+    } as Constraints
 
-      setWindTileLayer(tileLayer)
-    }
-  }, [mapReady])
+    // Create the ImageryTileLayer with the FlowRenderer
+    const tileLayer = createWindLayer(currentPressureValue, currentTimeSlice)
+
+    setWindTileLayer(tileLayer)
+  }, [mapReady, windTileLayer, currentPressureValue, currentTimeSlice])
 
   useEffect(() => {
     if (mapReady && mapRef.current && windTileLayer) {
@@ -119,117 +112,14 @@ function App() {
           slot="logo"
         ></calcite-navigation-logo>
       </calcite-navigation>
-      <calcite-panel
-        slot="panel-end"
-        id="filter-panel"
-        heading="Multidimensional Filter"
-        className={`w-[${panelWidth}]`}
-        scale="s"
-        description="Filter the multidimensional layer to visualize a single slice defined as a combination of pressure and time."
-      >
-        <calcite-block
-          collapsible
-          heading="Vertical Z dimension (StdPressure)"
-          expanded
-          icon-start="altitude"
-        >
-          <calcite-tile-group
-            alignment="start"
-            layout="vertical"
-            selection-appearance="border"
-            selection-mode="single-persist"
-            label="Vertical Z dimension (StdPressure) options"
-          >
-            <calcite-tile
-              selected
-              icon="plane"
-              heading="Wind at ~8km (Aviation)"
-              onClick={() => {
-                setCurrentPressureValue(17500)
-                setCurrentOffsetValue(8000)
-              }}
-              description="Winds data used for JetStream or aviation use cases.
-                     They are collected at a pressure of 17,500 Pa (~8km above the sea level)"
-            ></calcite-tile>
-            <calcite-tile
-              icon="find-add-path"
-              heading="Wind at ~1.5km (Bird migration)"
-              onClick={() => {
-                setCurrentPressureValue(85000)
-                setCurrentOffsetValue(1500)
-              }}
-              description="Winds data used to study the bird migration. They are collected and visualized at a pressure of 85,000 Pa (~1.5 kilometers above the sea level)"
-            ></calcite-tile>
-            <calcite-tile
-              icon="relative-to-ground-elevation"
-              heading="Wind at ~10m (Surface winds)"
-              onClick={() => {
-                setCurrentPressureValue(100000)
-                setCurrentOffsetValue(10)
-              }}
-              description="Winds data used for surface winds analysis. They are collected at a pressure of 100,000 Pa (~10m above the terrain)"
-            ></calcite-tile>
-          </calcite-tile-group>
-        </calcite-block>
-        <calcite-block
-          collapsible
-          expanded
-          heading="Time dimension (StdTime)"
-          icon-start="clock"
-        >
-          <div id="month-grid" className="grid grid-cols-4 gap-2 mb-4">
-            <calcite-button
-              round
-              appearance={currentTimeSlice === 1 ? 'solid' : 'outline-fill'}
-              value="1"
-              onClick={() => setCurrentTimeSlice(1)}
-            >
-              Jan
-            </calcite-button>
-            <calcite-button
-              round
-              appearance={currentTimeSlice === 4 ? 'solid' : 'outline-fill'}
-              value="4"
-              onClick={() => setCurrentTimeSlice(4)}
-            >
-              Apr
-            </calcite-button>
-            <calcite-button
-              round
-              appearance={currentTimeSlice === 7 ? 'solid' : 'outline-fill'}
-              value="7"
-              onClick={() => setCurrentTimeSlice(7)}
-            >
-              Jul
-            </calcite-button>
-            <calcite-button
-              round
-              appearance={currentTimeSlice === 10 ? 'solid' : 'outline-fill'}
-              value="10"
-              onClick={() => setCurrentTimeSlice(10)}
-            >
-              Oct
-            </calcite-button>
-          </div>
-          <calcite-notice scale="s" open icon="open-book">
-            <span slot="message">
-              The wind data shown are monthly averages from 2005 to 2024,
-              providing insight into long-term patterns at each pressure level.
-            </span>
-          </calcite-notice>
-        </calcite-block>
-        <calcite-block
-          collapsible
-          expanded
-          heading="Legend"
-          icon-start="legend"
-        >
-          <arcgis-legend
-            referenceElement={mapRef.current ?? undefined}
-            className="w-full"
-          />
-        </calcite-block>
-      </calcite-panel>
+      <MultidimensionalFilterPanel
+        panelWidth={panelWidth}
+        currentTimeSlice={currentTimeSlice}
+        sceneElement={mapRef.current}
+        setCurrentPressureValue={setCurrentPressureValue}
+        setCurrentOffsetValue={setCurrentOffsetValue}
+        setCurrentTimeSlice={setCurrentTimeSlice}
+      />
       <section className="flex h-full">
         <arcgis-scene
           ref={mapRef}
