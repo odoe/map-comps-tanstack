@@ -1,6 +1,9 @@
+import type FeatureLayer from '@arcgis/core/layers/FeatureLayer.js'
 import ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
 import DimensionalDefinition from '@arcgis/core/layers/support/DimensionalDefinition.js'
 import ColorVariable from '@arcgis/core/renderers/visualVariables/ColorVariable.js'
+import type LabelSymbol3D from '@arcgis/core/symbols/LabelSymbol3D.js'
+import type WebMap from '@arcgis/core/WebMap.js'
 
 export function createWindLayer(
   currentPressureValue: number,
@@ -51,3 +54,46 @@ export function createWindLayer(
   return tileLayer
 }
 
+export function updateLayerDefinition(
+  layer: ImageryTileLayer,
+  currentPressureValue: number,
+  currentTimeSlice: number,
+) {
+  layer.multidimensionalDefinition = [
+    new DimensionalDefinition({
+      variableName: 'Vector-MagDir',
+      dimensionName: 'StdPressure',
+      values: [currentPressureValue],
+      isSlice: true,
+    }),
+    new DimensionalDefinition({
+      variableName: 'Vector-MagDir',
+      dimensionName: 'StdTime',
+      values: [currentTimeSlice],
+      isSlice: true,
+    }),
+  ]
+}
+
+export function updateLayerElevation(
+  layer: ImageryTileLayer,
+  currentOffsetValue: number,
+) {
+  layer.elevationInfo = {
+    mode: 'absolute-height',
+    offset: currentOffsetValue,
+  }
+}
+
+export function updateLabels(map: WebMap) {
+  const labelsLayer = map.allLayers.find(
+    (layer) => layer.title === 'Places and Labels',
+  ) as FeatureLayer | undefined
+
+  labelsLayer?.labelingInfo?.forEach((labelClass) => {
+    labelClass.labelPlacement = 'above-center'
+    ;(labelClass.symbol as LabelSymbol3D).verticalOffset = {
+      screenLength: 8,
+    }
+  })
+}

@@ -29,7 +29,7 @@ export function MultidimensionalFilterPanel({
       slot="panel-end"
       id="filter-panel"
       heading="Multidimensional Filter"
-      className={`w-[${panelWidth}]`}
+      style={{ width: panelWidth }}
       scale="s"
       description="Filter the multidimensional layer to visualize a single slice defined as a combination of pressure and time."
     >
@@ -133,4 +133,3 @@ export function MultidimensionalFilterPanel({
     </calcite-panel>
   )
 }
-
