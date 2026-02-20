@@ -1,5 +1,6 @@
 import '@esri/calcite-components/components/calcite-block'
 import '@esri/calcite-components/components/calcite-button'
+import '@esri/calcite-components/components/calcite-link'
 import '@esri/calcite-components/components/calcite-notice'
 import '@esri/calcite-components/components/calcite-panel'
 import '@esri/calcite-components/components/calcite-tile'
@@ -10,7 +11,7 @@ import type { Dispatch, SetStateAction } from 'react'
 type MultidimensionalFilterPanelProps = {
   panelWidth: string
   currentTimeSlice: number
-  sceneElement: HTMLArcgisSceneElement | null
+  mapElement: HTMLArcgisMapElement | HTMLArcgisSceneElement | null
   setCurrentPressureValue: Dispatch<SetStateAction<number>>
   setCurrentOffsetValue: Dispatch<SetStateAction<number>>
   setCurrentTimeSlice: Dispatch<SetStateAction<number>>
@@ -19,7 +20,7 @@ type MultidimensionalFilterPanelProps = {
 export function MultidimensionalFilterPanel({
   panelWidth,
   currentTimeSlice,
-  sceneElement,
+  mapElement,
   setCurrentPressureValue,
   setCurrentOffsetValue,
   setCurrentTimeSlice,
@@ -190,9 +191,17 @@ export function MultidimensionalFilterPanel({
       </calcite-block>
       <calcite-block collapsible expanded heading="Legend" icon-start="legend">
         <arcgis-legend
-          referenceElement={sceneElement ?? undefined}
+          referenceElement={mapElement ?? undefined}
           className="w-full"
         />
+      </calcite-block>
+      <calcite-block collapsible expanded heading="github" icon-start="binary">
+        <calcite-link
+          href="https://github.com/odoe/map-comps-tanstack"
+          target="_blank"
+        >
+          View source code on GitHub
+        </calcite-link>
       </calcite-block>
     </calcite-panel>
   )

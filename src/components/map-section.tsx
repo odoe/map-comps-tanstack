@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 
 import '@esri/calcite-components/components/calcite-action'
 import '@esri/calcite-components/components/calcite-action-bar'
@@ -30,9 +30,10 @@ export function MapSection() {
   const [currentOffsetValue, setCurrentOffsetValue] = useState(8000) // Default offset value for "Aviation" scenario
   const [panelWidth, setPanelWidth] = useState('420px') // Initial width of the panel
 
-  const mapRef = useRef<HTMLArcgisSceneElement>(null)
+  const mapRef = useRef<HTMLArcgisMapElement | HTMLArcgisSceneElement>(null)
 
   useEffect(() => {
+    import('@arcgis/map-components/components/arcgis-map')
     import('@arcgis/map-components/components/arcgis-scene')
     import('@arcgis/map-components/components/arcgis-expand')
     import('@arcgis/map-components/components/arcgis-legend')
@@ -90,16 +91,16 @@ export function MapSection() {
       <MultidimensionalFilterPanel
         panelWidth={panelWidth}
         currentTimeSlice={currentTimeSlice}
-        sceneElement={mapRef.current}
+        mapElement={mapRef.current}
         setCurrentPressureValue={setCurrentPressureValue}
         setCurrentOffsetValue={setCurrentOffsetValue}
         setCurrentTimeSlice={setCurrentTimeSlice}
       />
       <section className="flex h-full">
-        <arcgis-scene
-          ref={mapRef}
+        <arcgis-map
+          ref={mapRef as RefObject<HTMLArcgisMapElement>}
           className="w-full"
-          item-id="e3d224978b384d7288bafee99e34c75a"
+          item-id="a77d428c4f644ae1bde3926a004aa633"
           onarcgisViewReadyChange={() => setMapReady(true)}
         />
         <div
