@@ -94,11 +94,43 @@ export function MultidimensionalFilterPanel({
           </calcite-button>
           <calcite-button
             round
+            appearance={currentTimeSlice === 2 ? 'solid' : 'outline-fill'}
+            value="2"
+            onClick={() => setCurrentTimeSlice(2)}
+          >
+            Feb
+          </calcite-button>
+          <calcite-button
+            round
+            appearance={currentTimeSlice === 3 ? 'solid' : 'outline-fill'}
+            value="3"
+            onClick={() => setCurrentTimeSlice(3)}
+          >
+            Mar
+          </calcite-button>
+          <calcite-button
+            round
             appearance={currentTimeSlice === 4 ? 'solid' : 'outline-fill'}
             value="4"
             onClick={() => setCurrentTimeSlice(4)}
           >
             Apr
+          </calcite-button>
+          <calcite-button
+            round
+            appearance={currentTimeSlice === 5 ? 'solid' : 'outline-fill'}
+            value="5"
+            onClick={() => setCurrentTimeSlice(5)}
+          >
+            May
+          </calcite-button>
+          <calcite-button
+            round
+            appearance={currentTimeSlice === 6 ? 'solid' : 'outline-fill'}
+            value="6"
+            onClick={() => setCurrentTimeSlice(6)}
+          >
+            Jun
           </calcite-button>
           <calcite-button
             round
@@ -110,11 +142,43 @@ export function MultidimensionalFilterPanel({
           </calcite-button>
           <calcite-button
             round
+            appearance={currentTimeSlice === 8 ? 'solid' : 'outline-fill'}
+            value="8"
+            onClick={() => setCurrentTimeSlice(8)}
+          >
+            Aug
+          </calcite-button>
+          <calcite-button
+            round
+            appearance={currentTimeSlice === 9 ? 'solid' : 'outline-fill'}
+            value="9"
+            onClick={() => setCurrentTimeSlice(9)}
+          >
+            Sep
+          </calcite-button>
+          <calcite-button
+            round
             appearance={currentTimeSlice === 10 ? 'solid' : 'outline-fill'}
             value="10"
             onClick={() => setCurrentTimeSlice(10)}
           >
             Oct
+          </calcite-button>
+          <calcite-button
+            round
+            appearance={currentTimeSlice === 11 ? 'solid' : 'outline-fill'}
+            value="11"
+            onClick={() => setCurrentTimeSlice(11)}
+          >
+            Nov
+          </calcite-button>
+          <calcite-button
+            round
+            appearance={currentTimeSlice === 12 ? 'solid' : 'outline-fill'}
+            value="12"
+            onClick={() => setCurrentTimeSlice(12)}
+          >
+            Dec
           </calcite-button>
         </div>
         <calcite-notice scale="s" open icon="open-book">
