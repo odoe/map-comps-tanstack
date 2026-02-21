@@ -8,8 +8,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.hidden {
+  opacity: 0;
+}
 
-code {
-  font-family:
-    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+arcgis-compass {
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }

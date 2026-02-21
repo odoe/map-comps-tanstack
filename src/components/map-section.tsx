@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState, type RefObject } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { RefObject } from 'react'
 
 import '@esri/calcite-components/components/calcite-action'
 import '@esri/calcite-components/components/calcite-action-bar'
@@ -9,8 +10,8 @@ import '@esri/calcite-components/components/calcite-navigation-logo'
 import '@esri/calcite-components/components/calcite-shell'
 
 import type ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
-import type Constraints from '@arcgis/core/views/3d/constraints/Constraints.js'
 import type WebMap from '@arcgis/core/WebMap.js'
+import { watch } from '@arcgis/core/core/reactiveUtils.js'
 
 import { MultidimensionalFilterPanel } from '@/components/multidimensional-filter-panel'
 import {
@@ -25,30 +26,27 @@ export function MapSection() {
   const [windTileLayer, setWindTileLayer] = useState<ImageryTileLayer | null>(
     null,
   )
+  const [showCompass, setShowCompass] = useState(false)
   const [currentPressureValue, setCurrentPressureValue] = useState(17500) // Default to "Aviation" scenario
   const [currentTimeSlice, setCurrentTimeSlice] = useState(1) // Default to January
   const [currentOffsetValue, setCurrentOffsetValue] = useState(8000) // Default offset value for "Aviation" scenario
   const [panelWidth, setPanelWidth] = useState('420px') // Initial width of the panel
 
-  const mapRef = useRef<HTMLArcgisMapElement | HTMLArcgisSceneElement>(null)
+  const mapRef = useRef<HTMLArcgisMapElement>(null)
 
   useEffect(() => {
-    import('@arcgis/map-components/components/arcgis-map')
-    import('@arcgis/map-components/components/arcgis-scene')
-    import('@arcgis/map-components/components/arcgis-expand')
-    import('@arcgis/map-components/components/arcgis-legend')
+    Promise.all([
+      import('@arcgis/map-components/components/arcgis-map'),
+      import('@arcgis/map-components/components/arcgis-compass'),
+      import('@arcgis/map-components/components/arcgis-expand'),
+      import('@arcgis/map-components/components/arcgis-legend'),
+    ])
   }, [])
 
   useEffect(() => {
     if (!mapReady || windTileLayer || !mapRef.current) return
 
     updateLabels(mapRef.current.map as WebMap)
-
-    mapRef.current.constraints = {
-      altitude: {
-        min: 1000000,
-      },
-    } as Constraints
 
     // Create the ImageryTileLayer with the FlowRenderer
     const tileLayer = createWindLayer(currentPressureValue, currentTimeSlice)
@@ -59,6 +57,14 @@ export function MapSection() {
   useEffect(() => {
     if (mapReady && mapRef.current && windTileLayer) {
       mapRef.current.map?.add(windTileLayer)
+
+      watch(
+        () => mapRef.current?.rotation,
+        (rotation) => {
+          setShowCompass(rotation !== 0)
+        },
+        { initial: true },
+      )
     }
   }, [mapReady, windTileLayer])
 
@@ -102,7 +108,12 @@ export function MapSection() {
           className="w-full"
           item-id="a77d428c4f644ae1bde3926a004aa633"
           onarcgisViewReadyChange={() => setMapReady(true)}
-        />
+        >
+          <arcgis-compass
+            className={!showCompass ? 'hidden' : ''}
+            slot="top-left"
+          />
+        </arcgis-map>
         <div
           className="w-2.5 h-full bg-blue-500 hover:bg-blue-100 hover:cursor-pointer"
           onClick={resizePanel}

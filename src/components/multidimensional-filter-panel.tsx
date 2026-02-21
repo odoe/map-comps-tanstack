@@ -11,7 +11,7 @@ import type { Dispatch, SetStateAction } from 'react'
 type MultidimensionalFilterPanelProps = {
   panelWidth: string
   currentTimeSlice: number
-  mapElement: HTMLArcgisMapElement | HTMLArcgisSceneElement | null
+  mapElement: HTMLArcgisMapElement | null
   setCurrentPressureValue: Dispatch<SetStateAction<number>>
   setCurrentOffsetValue: Dispatch<SetStateAction<number>>
   setCurrentTimeSlice: Dispatch<SetStateAction<number>>
