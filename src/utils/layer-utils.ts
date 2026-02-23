@@ -1,13 +1,41 @@
-import type FeatureLayer from '@arcgis/core/layers/FeatureLayer.js'
 import ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
 import DimensionalDefinition from '@arcgis/core/layers/support/DimensionalDefinition.js'
 import ColorVariable from '@arcgis/core/renderers/visualVariables/ColorVariable.js'
-import type LabelSymbol3D from '@arcgis/core/symbols/LabelSymbol3D.js'
-import type WebMap from '@arcgis/core/WebMap.js'
+
+const darkVisualVariables = [
+  new ColorVariable({
+    field: 'Magnitude',
+    stops: [
+      { value: 0, color: [0, 100, 255, 1], label: '0 m/s' },
+      { value: 0.1, color: [0, 150, 255, 1] },
+      { value: 3, color: [0, 200, 255, 1] },
+      { value: 7, color: [0, 220, 130, 1] },
+      { value: 15, color: [80, 255, 70, 1] },
+      { value: 25, color: [200, 255, 40, 1] },
+      { value: 40, color: [255, 255, 0, 1], label: '>40 m/s' },
+    ],
+  }),
+]
+
+const lightVisualVariables = [
+  new ColorVariable({
+    field: 'Magnitude',
+    stops: [
+      { value: 0, color: [0, 60, 130, 1], label: '0 m/s' },
+      { value: 0.1, color: [0, 90, 180, 1] },
+      { value: 3, color: [0, 120, 220, 1] },
+      { value: 7, color: [0, 170, 100, 1] },
+      { value: 15, color: [40, 180, 40, 1] },
+      { value: 25, color: [160, 180, 30, 1] },
+      { value: 40, color: [220, 180, 0, 1], label: '>40 m/s' },
+    ],
+  }),
+]
 
 export function createWindLayer(
   currentPressureValue: number,
   currentTimeSlice: number,
+  theme: 'light' | 'dark' = 'dark',
 ) {
   // Create the ImageryTileLayer with the FlowRenderer
   const tileLayer = new ImageryTileLayer({
@@ -21,20 +49,8 @@ export function createWindLayer(
       trailLength: 20,
       flowSpeed: 3,
       trailWidth: 2.5,
-      visualVariables: [
-        new ColorVariable({
-          field: 'Magnitude',
-          stops: [
-            { value: 0, color: [0, 100, 255, 1], label: '0 m/s' },
-            { value: 0.1, color: [0, 150, 255, 1] },
-            { value: 3, color: [0, 200, 255, 1] },
-            { value: 7, color: [0, 220, 130, 1] },
-            { value: 15, color: [80, 255, 70, 1] },
-            { value: 25, color: [200, 255, 40, 1] },
-            { value: 40, color: [255, 255, 0, 1], label: '>40 m/s' },
-          ],
-        }),
-      ],
+      visualVariables:
+        theme === 'dark' ? darkVisualVariables : lightVisualVariables,
     },
     multidimensionalDefinition: [
       new DimensionalDefinition({
@@ -83,4 +99,15 @@ export function updateLayerElevation(
     mode: 'absolute-height',
     offset: currentOffsetValue,
   }
+}
+
+export function updateLayerVisualVariables(
+  layer: ImageryTileLayer,
+  theme: 'light' | 'dark',
+) {
+  if (!layer.renderer || layer.renderer.type !== 'flow') return
+  const flowRenderer = layer.renderer.clone()
+  flowRenderer.visualVariables =
+    theme === 'dark' ? darkVisualVariables : lightVisualVariables
+  layer.renderer = flowRenderer
 }

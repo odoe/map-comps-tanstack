@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import '@esri/calcite-components/components/calcite-action'
 import '@esri/calcite-components/components/calcite-action-bar'
@@ -9,18 +9,22 @@ import '@esri/calcite-components/components/calcite-navigation'
 import '@esri/calcite-components/components/calcite-navigation-logo'
 import '@esri/calcite-components/components/calcite-shell'
 
-import type ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
 import { watch } from '@arcgis/core/core/reactiveUtils.js'
+import type ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
 
 import { MultidimensionalFilterPanel } from '@/components/multidimensional-filter-panel'
 import {
   createWindLayer,
   updateLayerDefinition,
   updateLayerElevation,
+  updateLayerVisualVariables,
 } from '@/utils/layer-utils'
+import Basemap from '@arcgis/core/Basemap'
 
-export function MapSection() {
+export function MapSection({ theme }: { theme: 'light' | 'dark' }) {
   const [mapReady, setMapReady] = useState(false)
+  const [lightBasemap, setLightBasemap] = useState<Basemap | null>(null)
+  const [darkBasemap, setDarkBasemap] = useState<Basemap | null>(null)
   const [windTileLayer, setWindTileLayer] = useState<ImageryTileLayer | null>(
     null,
   )
@@ -52,6 +56,10 @@ export function MapSection() {
 
   useEffect(() => {
     if (mapReady && mapRef.current && windTileLayer) {
+      setDarkBasemap(mapRef.current.map?.basemap ?? null)
+      setLightBasemap(
+        new Basemap({ portalItem: { id: '1ca7cffca342442da140c6be4a83faa6' } }),
+      )
       mapRef.current.map?.add(windTileLayer)
 
       watch(
@@ -79,6 +87,18 @@ export function MapSection() {
       updateLayerElevation(windTileLayer, currentOffsetValue)
     }
   }, [currentOffsetValue, windTileLayer])
+
+  useEffect(() => {
+    if (mapReady && mapRef.current?.map) {
+      const basemapToApply = theme === 'light' ? lightBasemap : darkBasemap
+      if (basemapToApply) {
+        mapRef.current.map.basemap = basemapToApply
+      }
+    }
+    if (windTileLayer) {
+      updateLayerVisualVariables(windTileLayer, theme)
+    }
+  }, [theme])
 
   function resizePanel() {
     if (panelWidth === '420px') {
