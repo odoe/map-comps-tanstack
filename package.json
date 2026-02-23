@@ -15,9 +15,9 @@
     "check": "prettier --write . && eslint --fix"
   },
   "dependencies": {
-    "@arcgis/core": "5.0.0-next.131",
-    "@arcgis/map-components": "5.0.0-next.173",
-    "@esri/calcite-components": "5.0.1",
+    "@arcgis/core": "~5.0.0",
+    "@arcgis/map-components": "~5.0.0",
+    "@esri/calcite-components": "~5.0.1",
     "@tailwindcss/vite": "^4.2.0",
     "@tanstack/react-devtools": "^0.7.11",
     "@tanstack/react-router": "^1.161.3",
@@ -49,3 +49,4 @@
     "vitest": "^3.2.4"
   }
 }
+
