@@ -21,13 +21,13 @@ const lightVisualVariables = [
   new ColorVariable({
     field: 'Magnitude',
     stops: [
-      { value: 0, color: [0, 60, 130, 1], label: '0 m/s' },
-      { value: 0.1, color: [0, 90, 180, 1] },
-      { value: 3, color: [0, 120, 220, 1] },
-      { value: 7, color: [0, 170, 100, 1] },
-      { value: 15, color: [40, 180, 40, 1] },
-      { value: 25, color: [160, 180, 30, 1] },
-      { value: 40, color: [220, 180, 0, 1], label: '>40 m/s' },
+      { value: 0, color: [255, 255, 0, 1], label: '0 m/s' },
+      { value: 0.1, color: [200, 255, 40, 1] },
+      { value: 3, color: [80, 255, 70, 1] },
+      { value: 7, color: [0, 220, 130, 1] },
+      { value: 15, color: [0, 200, 255, 1] },
+      { value: 25, color: [0, 150, 255, 1] },
+      { value: 40, color: [0, 100, 255, 1], label: '>40 m/s' },
     ],
   }),
 ]
