@@ -15,7 +15,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'ArcGIS Maps SDK for JavaScript - TanStack Router Example',
+        title: 'ArcGIS Maps SDK for JavaScript - TanStack Start Example',
       },
     ],
     links: [
