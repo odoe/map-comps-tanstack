@@ -195,7 +195,12 @@ export function MultidimensionalFilterPanel({
           className="w-full"
         />
       </calcite-block>
-      <calcite-block collapsible expanded heading="github" icon-start="binary">
+      <calcite-block
+        collapsible
+        expanded
+        heading="github"
+        icon-start="file-code"
+      >
         <calcite-link
           href="https://github.com/odoe/map-comps-tanstack"
           target="_blank"
