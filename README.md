@@ -1,4 +1,11 @@
-Welcome to your new TanStack Start app! 
+Demo Application using ArcGIS Maps SDK for JavaScript components and Calcite components with Tanstack Start
+
+# Features
+
+- Light and Dark theme (inluding basemap and renderer)
+- Flowrender with visualization updates
+- Map and Calcite components in React
+
 
 # Getting Started
 
