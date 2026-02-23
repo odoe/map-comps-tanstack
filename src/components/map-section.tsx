@@ -10,7 +10,6 @@ import '@esri/calcite-components/components/calcite-navigation-logo'
 import '@esri/calcite-components/components/calcite-shell'
 
 import type ImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer.js'
-import type WebMap from '@arcgis/core/WebMap.js'
 import { watch } from '@arcgis/core/core/reactiveUtils.js'
 
 import { MultidimensionalFilterPanel } from '@/components/multidimensional-filter-panel'
