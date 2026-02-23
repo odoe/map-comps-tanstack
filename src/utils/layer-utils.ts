@@ -84,16 +84,3 @@ export function updateLayerElevation(
     offset: currentOffsetValue,
   }
 }
-
-export function updateLabels(map: WebMap) {
-  const labelsLayer = map.allLayers.find(
-    (layer) => layer.title === 'Places and Labels',
-  ) as FeatureLayer | undefined
-
-  labelsLayer?.labelingInfo?.forEach((labelClass) => {
-    labelClass.labelPlacement = 'above-center'
-    ;(labelClass.symbol as LabelSymbol3D).verticalOffset = {
-      screenLength: 8,
-    }
-  })
-}

@@ -16,7 +16,6 @@ import { watch } from '@arcgis/core/core/reactiveUtils.js'
 import { MultidimensionalFilterPanel } from '@/components/multidimensional-filter-panel'
 import {
   createWindLayer,
-  updateLabels,
   updateLayerDefinition,
   updateLayerElevation,
 } from '@/utils/layer-utils'
@@ -45,8 +44,6 @@ export function MapSection() {
 
   useEffect(() => {
     if (!mapReady || windTileLayer || !mapRef.current) return
-
-    updateLabels(mapRef.current.map as WebMap)
 
     // Create the ImageryTileLayer with the FlowRenderer
     const tileLayer = createWindLayer(currentPressureValue, currentTimeSlice)
